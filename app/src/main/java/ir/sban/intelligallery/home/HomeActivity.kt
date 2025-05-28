@@ -7,10 +7,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.createGraph
 import dagger.hilt.android.AndroidEntryPoint
 import ir.sban.intelligallery.ui.theme.IntelligalleryTheme
 
@@ -21,29 +24,38 @@ class HomeActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             IntelligalleryTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                HomeContent()
             }
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+fun HomeContent() {
+    val navController = rememberNavController()
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        bottomBar = { BottomBar(navController) }
+    ) { innerPadding ->
+        val graph = navController.createGraph("all") {
+            Routes::class.sealedSubclasses.forEach { routeClass ->
+                val routeInstance = routeClass.objectInstance
+                routeInstance?.let { route -> composable(route.route) { route.screen() } }
+            }
+        }
+
+        NavHost(
+            modifier = Modifier.padding(innerPadding),
+            navController = navController,
+            graph = graph
+        )
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     IntelligalleryTheme {
-        Greeting("Android")
+        HomeContent()
     }
 }
