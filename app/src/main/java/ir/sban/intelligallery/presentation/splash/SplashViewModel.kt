@@ -1,4 +1,4 @@
-package ir.sban.intelligallery.splash
+package ir.sban.intelligallery.presentation.splash
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

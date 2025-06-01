@@ -1,10 +1,11 @@
-package ir.sban.intelligallery.splash
+package ir.sban.intelligallery.presentation.splash
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -27,13 +28,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import ir.sban.intelligallery.R
-import ir.sban.intelligallery.home.HomeActivity
-import ir.sban.intelligallery.ui.theme.IntelligalleryTheme
+import ir.sban.intelligallery.presentation.home.HomeActivity
+import ir.sban.intelligallery.presentation.ui.theme.IntelligalleryTheme
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SplashActivity : ComponentActivity() {
     val viewModel: SplashViewModel by viewModels()
+
+    private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

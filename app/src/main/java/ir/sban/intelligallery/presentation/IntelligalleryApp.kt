@@ -1,4 +1,4 @@
-package ir.sban.intelligallery
+package ir.sban.intelligallery.presentation
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

@@ -1,4 +1,4 @@
-package ir.sban.intelligallery.ui.theme
+package ir.sban.intelligallery.presentation.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
