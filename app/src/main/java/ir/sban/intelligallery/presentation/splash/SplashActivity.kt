@@ -2,7 +2,6 @@ package ir.sban.intelligallery.presentation.splash
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -58,13 +57,10 @@ class SplashActivity : ComponentActivity() {
                     }
 
                     SplashState.Error -> {
-                        Log.d("SplashActivity", "handleState: Error")
                         finish()
                     }
 
-                    SplashState.Loading -> {
-                        Log.d("SplashActivity", "onCreate: Loading")
-                    }
+                    SplashState.Loading -> {}
                 }
             }
         }

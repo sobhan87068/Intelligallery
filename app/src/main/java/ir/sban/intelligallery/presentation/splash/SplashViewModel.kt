@@ -1,6 +1,5 @@
 package ir.sban.intelligallery.presentation.splash
 
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -34,17 +33,10 @@ class SplashViewModel @Inject constructor() : ViewModel() {
         val notificationPermissions = requestNotificationPermission().filter {
             !activity.arePermissionsGranted(arrayOf(it))
         }
-        Log.d(
-            "SplashActivity",
-            "getRequestablePermissions: ${
-                (storagePermissions + notificationPermissions).joinToString(",")
-            }"
-        )
         val permissions =
             arrayOf(*storagePermissions.toTypedArray(), *notificationPermissions.toTypedArray())
         return callbackFlow {
             activity.requestPermissions(permissions) { permissionsResult ->
-                Log.d("SplashActivity", "PermissionsResult: $permissionsResult")
                 trySend(permissionsResult)
             }
 
