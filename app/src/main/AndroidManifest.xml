@@ -2,8 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" >
 
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
-        android:name=".IntelligalleryApp"
+        android:name=".presentation.IntelligalleryApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -14,7 +19,7 @@
         android:theme="@style/Theme.Intelligallery"
         tools:targetApi="31" >
         <activity
-            android:name=".splash.SplashActivity"
+            android:name=".presentation.splash.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.Intelligallery" >
             <intent-filter>
@@ -24,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".home.HomeActivity"
+            android:name=".presentation.home.HomeActivity"
             android:exported="false"
             android:theme="@style/Theme.Intelligallery" />
     </application>

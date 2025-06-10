@@ -1,4 +1,4 @@
-package ir.sban.intelligallery.home.screen
+package ir.sban.intelligallery.presentation.home.screen
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text

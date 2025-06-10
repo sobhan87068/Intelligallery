@@ -1,4 +1,4 @@
-package ir.sban.intelligallery.home
+package ir.sban.intelligallery.presentation.home
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -15,7 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.createGraph
 import dagger.hilt.android.AndroidEntryPoint
-import ir.sban.intelligallery.ui.theme.IntelligalleryTheme
+import ir.sban.intelligallery.presentation.ui.theme.IntelligalleryTheme
 
 @AndroidEntryPoint
 class HomeActivity : ComponentActivity() {

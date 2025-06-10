@@ -1,4 +1,4 @@
-package ir.sban.intelligallery.home
+package ir.sban.intelligallery.presentation.home
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape

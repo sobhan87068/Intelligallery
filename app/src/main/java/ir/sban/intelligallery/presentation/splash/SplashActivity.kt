@@ -1,4 +1,4 @@
-package ir.sban.intelligallery.splash
+package ir.sban.intelligallery.presentation.splash
 
 import android.content.Intent
 import android.os.Bundle
@@ -27,8 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import ir.sban.intelligallery.R
-import ir.sban.intelligallery.home.HomeActivity
-import ir.sban.intelligallery.ui.theme.IntelligalleryTheme
+import ir.sban.intelligallery.presentation.home.HomeActivity
+import ir.sban.intelligallery.presentation.ui.theme.IntelligalleryTheme
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -43,11 +43,25 @@ class SplashActivity : ComponentActivity() {
                 LogoImage()
             }
         }
+        handleState()
+        viewModel.checkStartup(this)
+    }
 
+    private fun handleState() {
         lifecycleScope.launch {
-            viewModel.checkStartup().collect {
-                startActivity(Intent(this@SplashActivity, HomeActivity::class.java))
-                finish()
+            viewModel.splashState.collect { state ->
+                when (state) {
+                    SplashState.Success -> {
+                        startActivity(Intent(this@SplashActivity, HomeActivity::class.java))
+                        finish()
+                    }
+
+                    SplashState.Error -> {
+                        finish()
+                    }
+
+                    SplashState.Loading -> {}
+                }
             }
         }
     }
@@ -55,10 +69,12 @@ class SplashActivity : ComponentActivity() {
 
 @Composable
 fun LogoImage() {
-    Scaffold( modifier = Modifier.fillMaxSize() ) { innerPadding ->
-        Column(modifier = Modifier
-            .padding(innerPadding)
-            .fillMaxSize()) {
+    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) {
             Spacer(modifier = Modifier.fillMaxHeight(.33f))
             Image(
                 painter = painterResource(id = R.drawable.logo),
