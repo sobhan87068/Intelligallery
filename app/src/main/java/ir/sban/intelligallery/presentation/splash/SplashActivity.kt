@@ -2,10 +2,10 @@ package ir.sban.intelligallery.presentation.splash
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -36,8 +36,6 @@ import kotlinx.coroutines.launch
 class SplashActivity : ComponentActivity() {
     val viewModel: SplashViewModel by viewModels()
 
-    private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -46,11 +44,28 @@ class SplashActivity : ComponentActivity() {
                 LogoImage()
             }
         }
+        handleState()
+        viewModel.checkStartup(this)
+    }
 
+    private fun handleState() {
         lifecycleScope.launch {
-            viewModel.checkStartup().collect {
-                startActivity(Intent(this@SplashActivity, HomeActivity::class.java))
-                finish()
+            viewModel.splashState.collect { state ->
+                when (state) {
+                    SplashState.Success -> {
+                        startActivity(Intent(this@SplashActivity, HomeActivity::class.java))
+                        finish()
+                    }
+
+                    SplashState.Error -> {
+                        Log.d("SplashActivity", "handleState: Error")
+                        finish()
+                    }
+
+                    SplashState.Loading -> {
+                        Log.d("SplashActivity", "onCreate: Loading")
+                    }
+                }
             }
         }
     }
@@ -58,10 +73,12 @@ class SplashActivity : ComponentActivity() {
 
 @Composable
 fun LogoImage() {
-    Scaffold( modifier = Modifier.fillMaxSize() ) { innerPadding ->
-        Column(modifier = Modifier
-            .padding(innerPadding)
-            .fillMaxSize()) {
+    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) {
             Spacer(modifier = Modifier.fillMaxHeight(.33f))
             Image(
                 painter = painterResource(id = R.drawable.logo),

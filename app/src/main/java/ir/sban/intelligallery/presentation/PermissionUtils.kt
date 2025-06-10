@@ -2,20 +2,55 @@ package ir.sban.intelligallery.presentation
 
 import android.app.Activity
 import android.content.pm.PackageManager
+import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 const val mediaImagePermission = android.Manifest.permission.READ_MEDIA_IMAGES
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 const val mediaVideoPermission = android.Manifest.permission.READ_MEDIA_VIDEO
+const val storageReadPermission = android.Manifest.permission.READ_EXTERNAL_STORAGE
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 const val notificationPermission = android.Manifest.permission.POST_NOTIFICATIONS
 
-val requiredPermissions = arrayOf(
-    mediaImagePermission,
-    mediaVideoPermission,
-    notificationPermission
-)
+fun requestStoragePermission(): Array<String> {
+    return when (Build.VERSION.SDK_INT) {
+        in Build.VERSION_CODES.TIRAMISU..Int.MAX_VALUE -> arrayOf(
+            mediaImagePermission,
+            mediaVideoPermission
+        )
+
+        in Build.VERSION_CODES.Q until Build.VERSION_CODES.TIRAMISU -> arrayOf(
+            storageReadPermission
+        )
+
+        else -> arrayOf(storageReadPermission)
+    }
+}
+
+fun requestNotificationPermission(): Array<String> {
+    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.TIRAMISU) {
+        return arrayOf()
+    }
+    return arrayOf(notificationPermission)
+}
+
+fun ComponentActivity.requestPermissions(permissions: Array<String>, onResult: (Boolean) -> Unit) {
+    if (arePermissionsGranted(permissions)) {
+        onResult(true)
+        return
+    }
+
+    requestRuntimePermissions(registerForPermissionRequest { permissionsGranted ->
+        onResult(permissionsGranted.all { it.value })
+    }, permissions)
+}
 
 /**
  * Registers an activity result launcher for requesting multiple permissions and
