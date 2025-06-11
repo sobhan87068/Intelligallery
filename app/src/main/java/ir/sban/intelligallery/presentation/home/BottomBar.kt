@@ -9,6 +9,8 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -19,11 +21,17 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun BottomBar(navController: NavController) {
+    // Observe the current back stack entry to update the selected item
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = currentBackStackEntry?.destination?.route
+
     val selectedNavIndex = rememberSaveable { mutableIntStateOf(2) }
+
     val navItems = listOf(
         NavigationItem(
             name = Routes.People.name,
@@ -51,6 +59,14 @@ fun BottomBar(navController: NavController) {
             route = Routes.Search.route
         )
     )
+
+    // Update selectedNavIndex based on the current route
+    LaunchedEffect(currentRoute) {
+        val index = navItems.indexOfFirst { it.route == currentRoute }
+        if (index != -1) {
+            selectedNavIndex.intValue = index
+        }
+    }
     NavigationBar(
         modifier = Modifier.clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
         containerColor = MaterialTheme.colorScheme.primary,
@@ -60,7 +76,13 @@ fun BottomBar(navController: NavController) {
                 selected = selectedNavIndex.intValue == index,
                 onClick = {
                     selectedNavIndex.intValue = index
-                    navController.navigate(item.route)
+                    navController.navigate(item.route) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 },
                 icon = {
                     Icon(
