@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "ir.sban.intelligallery"
-        minSdk = 29
+        minSdk = 24
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -43,6 +43,7 @@ android {
 
 dependencies {
 
+    //dependencies
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -57,11 +58,19 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.compose.navigation)
     implementation(libs.reflect)
+    implementation(libs.room)
+    ksp(libs.room.compiler)
+
+    //test dependencies
     testImplementation(libs.junit)
+
+    //android test dependencies
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+
+    //debug dependencies
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
