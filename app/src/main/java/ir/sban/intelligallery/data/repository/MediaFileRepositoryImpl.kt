@@ -2,6 +2,7 @@ package ir.sban.intelligallery.data.repository
 
 import android.content.Context
 import ir.sban.intelligallery.data.local.datastore.MediaFileDataStore
+import ir.sban.intelligallery.data.model.MediaFileDto
 import ir.sban.intelligallery.domain.repository.MediaFileRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -15,5 +16,9 @@ class MediaFileRepositoryImpl @Inject constructor(
         return flow {
             emit(mediaFileDataStore.refreshMediaFiles(context))
         }
+    }
+
+    override fun getAllMediaFiles(): Flow<List<MediaFileDto>> {
+        return mediaFileDataStore.getAllMediaFiles()
     }
 }

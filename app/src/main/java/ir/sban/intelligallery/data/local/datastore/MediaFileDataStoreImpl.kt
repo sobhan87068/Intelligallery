@@ -8,7 +8,11 @@ import android.provider.MediaStore
 import android.util.Log
 import ir.sban.intelligallery.data.local.db.GalleryDatabase
 import ir.sban.intelligallery.data.local.entity.MediaFileEntity
+import ir.sban.intelligallery.data.model.MediaFileDto
+import ir.sban.intelligallery.data.model.toDto
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -144,4 +148,9 @@ class MediaFileDataStoreImpl @Inject constructor(
         }
         return result
     }
+
+    override fun getAllMediaFiles(): Flow<List<MediaFileDto>> =
+        galleryDatabase.getMediaFileDao().getAllMediaFiles().map { entities ->
+            entities.map { it.toDto() }
+        }
 }

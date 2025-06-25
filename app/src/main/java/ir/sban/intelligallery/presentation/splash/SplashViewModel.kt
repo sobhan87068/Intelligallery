@@ -10,6 +10,7 @@ import ir.sban.intelligallery.presentation.arePermissionsGranted
 import ir.sban.intelligallery.presentation.requestNotificationPermission
 import ir.sban.intelligallery.presentation.requestPermissions
 import ir.sban.intelligallery.presentation.requestStoragePermission
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -53,6 +54,7 @@ class SplashViewModel @Inject constructor(
         return refreshAllItemsUseCase(context)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun checkStartup(activity: ComponentActivity) {
         viewModelScope.launch {
             val timerFlow = flow {

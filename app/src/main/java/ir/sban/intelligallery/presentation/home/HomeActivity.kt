@@ -4,10 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
@@ -15,16 +17,23 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.createGraph
 import dagger.hilt.android.AndroidEntryPoint
+import ir.sban.intelligallery.presentation.home.screen.all_items.AllItemsViewModel
 import ir.sban.intelligallery.presentation.ui.theme.IntelligalleryTheme
 
 @AndroidEntryPoint
 class HomeActivity : ComponentActivity() {
+    private val allItemsViewModel: AllItemsViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             IntelligalleryTheme {
-                HomeContent()
+                CompositionLocalProvider(localAllItemsViewModel provides allItemsViewModel) { //TODO: use hilt delegate for viewModel when net fixed
+                    CompositionLocalProvider(localContentResolver provides contentResolver) {
+                        HomeContent()
+                    }
+                }
             }
         }
     }
