@@ -225,7 +225,7 @@ private fun RowScope.SimpleRowItem(
             .weight(1f)
             .aspectRatio(1f)
     ) {
-        ImageItem(item = item)
+        ImageItem(modifier = Modifier.fillMaxSize(), item = item)
     }
 }
 
