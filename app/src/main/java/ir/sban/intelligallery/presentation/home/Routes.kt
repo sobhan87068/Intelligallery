@@ -3,10 +3,10 @@ package ir.sban.intelligallery.presentation.home
 import androidx.compose.runtime.Composable
 import ir.sban.intelligallery.R
 import ir.sban.intelligallery.presentation.home.screen.AlbumsScreen
-import ir.sban.intelligallery.presentation.home.screen.AllItemsScreen
 import ir.sban.intelligallery.presentation.home.screen.FavoriteScreen
 import ir.sban.intelligallery.presentation.home.screen.PeopleScreen
 import ir.sban.intelligallery.presentation.home.screen.SearchScreen
+import ir.sban.intelligallery.presentation.home.screen.all_items.AllItemsScreen
 
 sealed class Routes(
     val route: String,
