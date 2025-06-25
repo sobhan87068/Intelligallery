@@ -14,7 +14,8 @@ import javax.inject.Inject
 class AllItemsViewModel @Inject constructor(
     getAllMediaFilesUseCase: GetAllMediaFilesUseCase
 ) : ViewModel() {
-    private val _allItems: MutableStateFlow<List<MediaFile>> = MutableStateFlow(listOf())
+    private val _allItems: MutableStateFlow<Map<String, List<MediaFile>>> =
+        MutableStateFlow(mapOf(Pair("", listOf())))
     val allItems = _allItems.asStateFlow()
 
     init {

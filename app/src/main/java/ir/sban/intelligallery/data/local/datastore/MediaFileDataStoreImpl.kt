@@ -153,4 +153,12 @@ class MediaFileDataStoreImpl @Inject constructor(
         galleryDatabase.getMediaFileDao().getAllMediaFiles().map { entities ->
             entities.map { it.toDto() }
         }
+
+    override fun getGroupedMediaFiles(): Flow<Map<String, List<MediaFileDto>>> {
+        val monthlyList = galleryDatabase.getMediaFileDao().getGroupedMediaFiles()
+        return monthlyList.map { entities ->
+            entities.groupBy { it.month }
+                .mapValues { (_, value) -> value.map { it.mediaFileEntity.toDto() } }
+        }
+    }
 }

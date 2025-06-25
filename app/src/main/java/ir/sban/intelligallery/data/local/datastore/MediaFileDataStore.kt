@@ -8,4 +8,6 @@ interface MediaFileDataStore {
     suspend fun refreshMediaFiles(context: Context): Boolean
 
     fun getAllMediaFiles(): Flow<List<MediaFileDto>>
+
+    fun getGroupedMediaFiles(): Flow<Map<String, List<MediaFileDto>>>
 }

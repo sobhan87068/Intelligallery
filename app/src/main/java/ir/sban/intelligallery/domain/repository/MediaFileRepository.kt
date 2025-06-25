@@ -8,4 +8,6 @@ interface MediaFileRepository {
     suspend fun refreshAllMediaFiles(context: Context): Flow<Boolean>
 
     fun getAllMediaFiles(): Flow<List<MediaFileDto>>
+
+    fun getGroupedMediaFiles(): Flow<Map<String, List<MediaFileDto>>>
 }
