@@ -246,6 +246,7 @@ private fun ImageItem(
         AsyncImage(
             modifier = Modifier.fillMaxSize(),
             model = imageRequest,
+            placeholder = painterResource(R.drawable.logo),
             contentDescription = null,
             contentScale = ContentScale.Crop
         )
