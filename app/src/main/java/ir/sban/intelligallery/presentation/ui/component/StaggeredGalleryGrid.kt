@@ -37,7 +37,7 @@ fun StaggeredGalleryGrid(
             Column(modifier = modifier) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Start
+                    horizontalArrangement = Arrangement.spacedBy(spacing)
                 ) {
                     items.forEach { item ->
                         SimpleRowItem(item)
@@ -47,13 +47,19 @@ fun StaggeredGalleryGrid(
         }
 
         in 5..7 -> {
-            Column(modifier = modifier) {
-                Row(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(spacing)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(spacing)
+                ) {
                     items.subList(0, 4).forEach { item ->
                         SimpleRowItem(item)
                     }
                 }
-                Row {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(spacing)
+                ) {
                     items.subList(4, items.size).forEach { item ->
                         SimpleRowItem(item)
                     }
