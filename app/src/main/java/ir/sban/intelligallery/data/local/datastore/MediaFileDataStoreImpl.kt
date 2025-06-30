@@ -161,4 +161,7 @@ class MediaFileDataStoreImpl @Inject constructor(
                 .mapValues { (_, value) -> value.map { it.mediaFileEntity.toDto() } }
         }
     }
+
+    override fun getMediaFileById(id: Long): Flow<MediaFileDto> =
+        galleryDatabase.getMediaFileDao().getMediaFileById(id).map { it.toDto() }
 }

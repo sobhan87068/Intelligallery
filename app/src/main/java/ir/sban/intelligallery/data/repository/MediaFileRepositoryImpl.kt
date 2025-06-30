@@ -25,4 +25,8 @@ class MediaFileRepositoryImpl @Inject constructor(
     override fun getGroupedMediaFiles(): Flow<Map<String, List<MediaFileDto>>> {
         return mediaFileDataStore.getGroupedMediaFiles()
     }
+
+    override fun getMediaFileById(id: Long): Flow<MediaFileDto> {
+        return mediaFileDataStore.getMediaFileById(id)
+    }
 }

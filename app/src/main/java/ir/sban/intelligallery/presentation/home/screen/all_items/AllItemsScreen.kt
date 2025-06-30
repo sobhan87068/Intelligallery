@@ -1,5 +1,8 @@
 package ir.sban.intelligallery.presentation.home.screen.all_items
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -10,12 +13,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import ir.sban.intelligallery.presentation.home.localAllItemsViewModel
 import ir.sban.intelligallery.presentation.ui.component.StaggeredGalleryGrid
 import ir.sban.intelligallery.presentation.ui.component.StaggeringType
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun AllItemsScreen(viewModel: AllItemsViewModel? = localAllItemsViewModel.current) {
+fun AllItemsScreen(
+    viewModel: AllItemsViewModel? = localAllItemsViewModel.current,
+    navController: NavController = rememberNavController(),
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope
+) {
     val items = viewModel?.allItems?.collectAsState()?.value
     val spacing = 2.dp
 
@@ -42,9 +53,12 @@ fun AllItemsScreen(viewModel: AllItemsViewModel? = localAllItemsViewModel.curren
                 }
                 item(key = list.map { it.mediaStoreId }.joinToString("-")) {
                     StaggeredGalleryGrid(
+                        navController = navController,
                         items = list,
                         staggeringType = staggeringType,
-                        spacing = spacing
+                        spacing = spacing,
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedContentScope = animatedContentScope
                     )
                 }
             }

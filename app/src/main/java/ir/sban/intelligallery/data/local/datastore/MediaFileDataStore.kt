@@ -10,4 +10,6 @@ interface MediaFileDataStore {
     fun getAllMediaFiles(): Flow<List<MediaFileDto>>
 
     fun getGroupedMediaFiles(): Flow<Map<String, List<MediaFileDto>>>
+
+    fun getMediaFileById(id: Long): Flow<MediaFileDto>
 }

@@ -1,7 +1,13 @@
 package ir.sban.intelligallery.presentation.ui.component
 
 import android.util.Log
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -15,6 +21,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -23,17 +32,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Scale
 import ir.sban.intelligallery.R
 import ir.sban.intelligallery.domain.model.MediaFile
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun StaggeredGalleryGrid(
     modifier: Modifier = Modifier,
     items: List<MediaFile>,
     staggeringType: StaggeringType,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+    navController: NavController = rememberNavController(),
     spacing: Dp = 2.dp
 ) {
     when (items.size) {
@@ -44,7 +59,7 @@ fun StaggeredGalleryGrid(
                     horizontalArrangement = Arrangement.spacedBy(spacing)
                 ) {
                     items.forEach { item ->
-                        SimpleRowItem(item)
+                        SimpleRowItem(item, sharedTransitionScope, animatedContentScope)
                     }
                 }
             }
@@ -57,7 +72,16 @@ fun StaggeredGalleryGrid(
                     horizontalArrangement = Arrangement.spacedBy(spacing)
                 ) {
                     items.subList(0, 4).forEach { item ->
-                        SimpleRowItem(item)
+                        SimpleRowItem(
+                            item,
+                            sharedTransitionScope,
+                            animatedContentScope,
+                            Modifier
+                                .fillMaxSize()
+                                .clickable {
+                                    navController.navigate("media-details/${item.mediaStoreId}")
+                                }
+                        )
                     }
                 }
                 Row(
@@ -65,14 +89,30 @@ fun StaggeredGalleryGrid(
                     horizontalArrangement = Arrangement.spacedBy(spacing)
                 ) {
                     items.subList(4, items.size).forEach { item ->
-                        SimpleRowItem(item)
+                        SimpleRowItem(
+                            item,
+                            sharedTransitionScope,
+                            animatedContentScope,
+                            Modifier
+                                .fillMaxSize()
+                                .clickable {
+                                    navController.navigate("media-details/${item.mediaStoreId}")
+                                }
+                        )
                     }
                 }
             }
         }
 
         8 -> {
-            FullItemGrid(modifier.aspectRatio(1f), items, staggeringType)
+            FullItemGrid(
+                modifier = modifier.aspectRatio(1f),
+                items = items,
+                sharedTransitionScope,
+                animatedContentScope,
+                staggeringType = staggeringType,
+                navController = navController
+            )
         }
 
         else -> {
@@ -81,10 +121,14 @@ fun StaggeredGalleryGrid(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun FullItemGrid(
     modifier: Modifier = Modifier,
     items: List<MediaFile>,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+    navController: NavController = rememberNavController(),
     staggeringType: StaggeringType = StaggeringType.TOP_START,
     spacing: Dp = 2.dp
 ) {
@@ -204,61 +248,106 @@ private fun FullItemGrid(
         }
     }
     Box(modifier = modifier) {
-        ImageItem(modifier = imageModifier(), item = items[imageIndex])
+        ImageItem(
+            modifier = imageModifier()
+                .clickable {
+                    navController.navigate("media-details/${items[imageIndex].mediaStoreId}")
+                },
+            item = items[imageIndex],
+            sharedTransitionScope = sharedTransitionScope,
+            animatedContentScope = animatedContentScope
+        )
         Row(modifier = rowModifier(), horizontalArrangement = Arrangement.spacedBy(spacing)) {
             rowIndices.forEach { idx ->
-                SimpleRowItem(items[idx])
+                SimpleRowItem(
+                    item = items[idx],
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable {
+                            navController.navigate("media-details/${items[idx].mediaStoreId}")
+                        },
+                    sharedTransitionScope = sharedTransitionScope,
+                    animatedContentScope = animatedContentScope
+                )
             }
         }
         Column(modifier = columnModifier(), verticalArrangement = Arrangement.spacedBy(spacing)) {
             columnIndices.forEach { idx ->
                 Box(modifier = Modifier.weight(1f)) {
-                    ImageItem(item = items[idx])
+                    ImageItem(
+                        item = items[idx],
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clickable {
+                                navController.navigate("media-details/${items[idx].mediaStoreId}")
+                            },
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedContentScope = animatedContentScope
+                    )
                 }
             }
         }
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun RowScope.SimpleRowItem(
-    item: MediaFile
+    item: MediaFile,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+    modifier: Modifier = Modifier.fillMaxSize()
 ) {
     Box(
         modifier = Modifier
             .weight(1f)
             .aspectRatio(1f)
     ) {
-        ImageItem(modifier = Modifier.fillMaxSize(), item = item)
+        ImageItem(
+            modifier = modifier,
+            item = item,
+            sharedTransitionScope = sharedTransitionScope,
+            animatedContentScope = animatedContentScope
+        )
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun ImageItem(
     modifier: Modifier = Modifier,
-    item: MediaFile,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+    item: MediaFile
 ) {
-    val imageRequest = ImageRequest.Builder(LocalContext.current)
-        .size(500).data(item.contentUri).scale(Scale.FIT).crossfade(true)
-        .allowHardware(false)
-        .build()
-    Box(modifier = modifier) {
-        AsyncImage(
-            modifier = Modifier.fillMaxSize(),
-            model = imageRequest,
-            placeholder = painterResource(R.drawable.logo),
-            contentDescription = null,
-            contentScale = ContentScale.Crop
-        )
-
-        if (item.isVideo) {
-            Image(
+    with(sharedTransitionScope) {
+        val imageRequest = ImageRequest.Builder(LocalContext.current)
+            .size(500).data(item.contentUri).scale(Scale.FIT).crossfade(true)
+            .allowHardware(false)
+            .build()
+        Box(modifier = modifier) {
+            AsyncImage(
                 modifier = Modifier
                     .fillMaxSize()
-                    .wrapContentSize(),
-                painter = painterResource(R.drawable.play_circle_outline),
-                contentDescription = null
+                    .sharedElement(
+                        state = rememberSharedContentState(item.mediaStoreId),
+                        animatedVisibilityScope = animatedContentScope
+                    ),
+                model = imageRequest,
+                placeholder = painterResource(R.drawable.logo),
+                contentDescription = null,
+                contentScale = ContentScale.Crop
             )
+
+            if (item.isVideo) {
+                Image(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .wrapContentSize(),
+                    painter = painterResource(R.drawable.play_circle_outline),
+                    contentDescription = null
+                )
+            }
         }
     }
 }
@@ -267,49 +356,79 @@ enum class StaggeringType {
     TOP_START, TOP_END, BOTTOM_START, BOTTOM_END
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Preview("less than 4")
 @Composable
 fun LessThan4Preview() {
-    StaggeredGalleryGrid(
-        modifier = Modifier.fillMaxSize(),
-        items = listOf(
-            MediaFile(-1, "", "", -1, -1, "", 0, 0, null, 0, false),
-            MediaFile(-2, "", "", -1, -1, "", 0, 0, null, 0, false),
-            MediaFile(-3, "", "", -1, -1, "", 0, 0, null, 0, false),
-        ), staggeringType = StaggeringType.TOP_START
-    )
+    val targetState by remember { mutableStateOf(true) }
+    SharedTransitionLayout {
+        AnimatedContent(targetState = targetState) {
+            if (it) {
+                StaggeredGalleryGrid(
+                    modifier = Modifier.fillMaxSize(),
+                    items = listOf(
+                        MediaFile(-1, "", "", -1, -1, "", 0, 0, null, 0, false),
+                        MediaFile(-2, "", "", -1, -1, "", 0, 0, null, 0, false),
+                        MediaFile(-3, "", "", -1, -1, "", 0, 0, null, 0, false),
+                    ), staggeringType = StaggeringType.TOP_START,
+                    sharedTransitionScope = this@SharedTransitionLayout,
+                    animatedContentScope = this
+                )
+            }
+        }
+    }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Preview("between 4&7")
 @Composable
 fun Between4and7Preview() {
-    StaggeredGalleryGrid(
-        modifier = Modifier.fillMaxSize(),
-        items = listOf(
-            MediaFile(-1, "", "", -1, -1, "", 0, 0, null, 0, false),
-            MediaFile(-2, "", "", -1, -1, "", 0, 0, null, 0, false),
-            MediaFile(-3, "", "", -1, -1, "", 0, 0, null, 0, false),
-            MediaFile(-4, "", "", -1, -1, "", 0, 0, null, 0, false),
-            MediaFile(-5, "", "", -1, -1, "", 0, 0, null, 0, false),
-            MediaFile(-6, "", "", -1, -1, "", 0, 0, null, 0, false),
-        ), staggeringType = StaggeringType.TOP_START
-    )
+    val targetState by remember { mutableStateOf(true) }
+    SharedTransitionLayout {
+        AnimatedContent(targetState = targetState) {
+            if (it) {
+                StaggeredGalleryGrid(
+                    modifier = Modifier.fillMaxSize(),
+                    items = listOf(
+                        MediaFile(-1, "", "", -1, -1, "", 0, 0, null, 0, false),
+                        MediaFile(-2, "", "", -1, -1, "", 0, 0, null, 0, false),
+                        MediaFile(-3, "", "", -1, -1, "", 0, 0, null, 0, false),
+                        MediaFile(-4, "", "", -1, -1, "", 0, 0, null, 0, false),
+                        MediaFile(-5, "", "", -1, -1, "", 0, 0, null, 0, false),
+                        MediaFile(-6, "", "", -1, -1, "", 0, 0, null, 0, false),
+                    ), staggeringType = StaggeringType.TOP_START,
+                    sharedTransitionScope = this@SharedTransitionLayout,
+                    animatedContentScope = this
+                )
+            }
+        }
+    }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Preview("8 items")
 @Composable
 fun FullRowPreview() {
-    StaggeredGalleryGrid(
-        modifier = Modifier.fillMaxSize(),
-        items = listOf(
-            MediaFile(-1, "", "", -1, -1, "", 0, 0, null, 0, false),
-            MediaFile(-2, "", "", -1, -1, "", 0, 0, null, 0, false),
-            MediaFile(-3, "", "", -1, -1, "", 0, 0, null, 0, false),
-            MediaFile(-4, "", "", -1, -1, "", 0, 0, null, 0, false),
-            MediaFile(-5, "", "", -1, -1, "", 0, 0, null, 0, false),
-            MediaFile(-6, "", "", -1, -1, "", 0, 0, null, 0, false),
-            MediaFile(-7, "", "", -1, -1, "", 0, 0, null, 0, false),
-            MediaFile(-8, "", "", -1, -1, "", 0, 0, null, 0, false),
-        ), staggeringType = StaggeringType.TOP_START
-    )
+    val targetState by remember { mutableStateOf(true) }
+    SharedTransitionLayout {
+        AnimatedContent(targetState = targetState) {
+            if (it) {
+                StaggeredGalleryGrid(
+                    modifier = Modifier.fillMaxSize(),
+                    items = listOf(
+                        MediaFile(-1, "", "", -1, -1, "", 0, 0, null, 0, false),
+                        MediaFile(-2, "", "", -1, -1, "", 0, 0, null, 0, false),
+                        MediaFile(-3, "", "", -1, -1, "", 0, 0, null, 0, false),
+                        MediaFile(-4, "", "", -1, -1, "", 0, 0, null, 0, false),
+                        MediaFile(-5, "", "", -1, -1, "", 0, 0, null, 0, false),
+                        MediaFile(-6, "", "", -1, -1, "", 0, 0, null, 0, false),
+                        MediaFile(-7, "", "", -1, -1, "", 0, 0, null, 0, false),
+                        MediaFile(-8, "", "", -1, -1, "", 0, 0, null, 0, false),
+                    ), staggeringType = StaggeringType.TOP_START,
+                    sharedTransitionScope = this@SharedTransitionLayout,
+                    animatedContentScope = this
+                )
+            }
+        }
+    }
 }

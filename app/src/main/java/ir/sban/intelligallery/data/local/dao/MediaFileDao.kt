@@ -27,4 +27,7 @@ interface MediaFileDao {
 
     @Upsert
     fun insertAllMediaFiles(mediaFileList: List<MediaFileEntity>)
+
+    @Query("SELECT * FROM media_files WHERE mediaStoreId = :id")
+    fun getMediaFileById(id: Long): Flow<MediaFileEntity>
 }
